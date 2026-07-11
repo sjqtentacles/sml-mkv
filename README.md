@@ -63,6 +63,36 @@ Mkv.parseHeader [0x00, 0x45, 0xDF, 0xA3] (* NONE *)
 - Sizes are decoded as plain integers; the "unknown size" all-ones VINT is not
   given special treatment.
 
+## Example
+
+`make example` builds and runs [`examples/demo.sml`](examples/demo.sml), which
+decodes a hand-built EBML/Matroska byte stream (an EBML header, a Segment
+element, and a Void element) with `vintLength`, `readId`, `readSize`,
+`parseHeader`, and `scan` (output is byte-identical under MLton and
+Poly/ML):
+
+```
+vintLength (VINT byte length from the marker bit):
+  vintLength(0x1A) = 4
+  vintLength(0x80) = 1
+  vintLength(0xEC) = 1
+  vintLength(0x40) = 2
+
+readId on the EBML magic bytes:
+  id = 0x1A45DFA3, 0 bytes left
+
+readSize on a lone 1-byte VINT [0x9F]:
+  size = 31, 0 bytes left
+
+parseHeader on the stream:
+  id = 0x1A45DFA3, size = 4
+
+scan over the stream (top-level elements):
+  Element id=0x1A45DFA3 size=4
+  Element id=0x18538067 size=10
+  Element id=0xEC size=3
+```
+
 ## Installing with smlpkg
 
 ```sh
